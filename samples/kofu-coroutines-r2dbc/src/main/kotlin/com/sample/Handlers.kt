@@ -13,18 +13,18 @@ class UserHandler(
 		private val repository: UserRepository,
 		private val configuration: SampleProperties) {
 
-	suspend fun listApi(request: ServerRequest) =
-		ok().contentType(MediaType.APPLICATION_JSON)
-				.bodyAndAwait(repository.findAll())
+	suspend fun listApi(request: ServerRequest) = ok()
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyAndAwait(repository.findAll())
 
-	suspend fun userApi(request: ServerRequest) =
-			ok().contentType(MediaType.APPLICATION_JSON)
-					.bodyAndAwait(repository.findOne(request.pathVariable("login")))
+	suspend fun userApi(request: ServerRequest) = ok()
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyAndAwait(repository.findOne(request.pathVariable("login")))
 
-	suspend fun listView(request: ServerRequest) =
-		ok().renderAndAwait("users", mapOf("users" to repository.findAll()))
+	suspend fun listView(request: ServerRequest) = ok()
+			.renderAndAwait("users", mapOf("users" to repository.findAll()))
 
-	suspend fun conf(request: ServerRequest) =
-		ok().bodyAndAwait(configuration.message)
+	suspend fun conf(request: ServerRequest) = ok()
+			.bodyAndAwait(configuration.message)
 
 }
