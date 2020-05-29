@@ -5,6 +5,7 @@ import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.data.r2dbc.connectionfactory.R2dbcTransactionManager;
 import org.springframework.data.r2dbc.core.DatabaseClient;
 
 public class PostgresqlDatabaseClientInitializer implements ApplicationContextInitializer<GenericApplicationContext> {
@@ -25,8 +26,11 @@ public class PostgresqlDatabaseClientInitializer implements ApplicationContextIn
 				.database(this.properties.getDatabase())
 				.username(this.properties.getUsername())
 				.password(this.properties.getPassword())
+				.connectTimeout(this.properties.getConnectTimeout())
 				.build();
 
-		context.registerBean(DatabaseClient.class, () -> DatabaseClient.builder().connectionFactory(new PostgresqlConnectionFactory(configuration)).build());
+		PostgresqlConnectionFactory postgresqlConnectionFactory = new PostgresqlConnectionFactory(configuration);
+		context.registerBean(DatabaseClient.class, () -> DatabaseClient.builder().connectionFactory(postgresqlConnectionFactory).build());
+		context.registerBean(R2dbcTransactionManager.class, () -> new R2dbcTransactionManager(postgresqlConnectionFactory));
 	}
 }

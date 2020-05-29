@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.data.r2dbc.PostgresqlR2dbcProperti
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.fu.kofu.AbstractDsl
 import org.springframework.fu.kofu.ConfigurationDsl
+import java.time.Duration
 
 /**
  * Kofu DSL for R2DBC Postgresql configuration.
@@ -43,6 +44,11 @@ class PostgresqlR2dbcDsl(private val init: PostgresqlR2dbcDsl.() -> Unit) : Abst
 	 */
 	var password: String = ""
 
+	/**
+	 * Configure connection timeout
+	 */
+	var connectTimeout: Duration? = null
+
 	override fun initialize(context: GenericApplicationContext) {
 		super.initialize(context)
 		init()
@@ -53,6 +59,7 @@ class PostgresqlR2dbcDsl(private val init: PostgresqlR2dbcDsl.() -> Unit) : Abst
 		properties.database = database
 		properties.username = username
 		properties.password = password
+		properties.connectTimeout = connectTimeout
 
 		PostgresqlDatabaseClientInitializer(properties).initialize(context)
 	}

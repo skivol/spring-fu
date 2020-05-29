@@ -1,5 +1,7 @@
 package org.springframework.boot.autoconfigure.data.r2dbc;
 
+import java.time.Duration;
+
 public class PostgresqlR2dbcProperties {
 
 	private String host;
@@ -11,6 +13,8 @@ public class PostgresqlR2dbcProperties {
 	private String username;
 
 	private String password;
+
+	private Duration connectTimeout;
 
 	public String getHost() {
 		return host;
@@ -52,4 +56,11 @@ public class PostgresqlR2dbcProperties {
 		this.password = password;
 	}
 
+	public Duration getConnectTimeout() {
+		return connectTimeout;
+	}
+
+	public void setConnectTimeout(Duration connectTimeout) {
+		this.connectTimeout = connectTimeout;
+	}
 }
