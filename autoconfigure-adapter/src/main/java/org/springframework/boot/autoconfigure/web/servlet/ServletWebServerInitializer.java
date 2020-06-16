@@ -68,7 +68,7 @@ public class ServletWebServerInitializer implements ApplicationContextInitialize
 
 	@Override
 	public void initialize(GenericApplicationContext context) {
-		context.registerBean("webServerFactoryCustomizerBeanPostProcessor", WebServerFactoryCustomizerBeanPostProcessor.class);
+		context.registerBean("webServerFactoryCustomizerBeanPostProcessor", WebServerFactoryCustomizerBeanPostProcessor.class, WebServerFactoryCustomizerBeanPostProcessor::new);
 		context.registerBean(WebMvcProperties.class, () -> this.webMvcProperties);
 		context.registerBean(ServletWebServerFactoryAutoConfiguration.BeanPostProcessorsRegistrar.class, ServletWebServerFactoryAutoConfiguration.BeanPostProcessorsRegistrar::new);
 		context.registerBean(TomcatServletWebServerFactory.class, () -> new ServletWebServerFactoryConfiguration.EmbeddedTomcat().tomcatServletWebServerFactory(
@@ -94,7 +94,7 @@ public class ServletWebServerInitializer implements ApplicationContextInitialize
 			@Override
 			public WebMvcAutoConfigurationAdapter get() {
 				if (configuration == null) {
-					configuration = new WebMvcAutoConfigurationAdapter(resourceProperties, webMvcProperties, context, context.getBeanProvider(HttpMessageConverters.class), context.getBeanProvider(ResourceHandlerRegistrationCustomizer.class));
+					configuration = new WebMvcAutoConfigurationAdapter(resourceProperties, webMvcProperties, context, context.getBeanProvider(HttpMessageConverters.class), context.getBeanProvider(ResourceHandlerRegistrationCustomizer.class), context.getBeanProvider(DispatcherServletPath.class));
 					return configuration;
 				}
 				return configuration;
