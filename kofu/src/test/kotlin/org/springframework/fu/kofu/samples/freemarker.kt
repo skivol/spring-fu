@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 the original author or authors.
+ * Copyright 2012-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.springframework.fu.kofu.samples
 
-import org.springframework.boot.WebApplicationType
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.freemarker.freeMarker
 
@@ -24,7 +23,7 @@ import org.springframework.fu.kofu.freemarker.freeMarker
  * @see org.springframework.fu.kofu.webmvc.FreeMarkerDslTests
  */
 fun freeMarkerDsl() {
-    application(WebApplicationType.NONE) {
+    application {
         freeMarker {
             settings["locale"] = "en_GB" // https://freemarker.apache.org/docs/api/freemarker/template/Configuration.html#setSetting-java.lang.String-java.lang.String-
             templateLoaderPath = arrayOf("classpath:/templates/", "classpath:/templates-2/")

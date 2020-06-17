@@ -18,7 +18,6 @@ package org.springframework.fu.kofu.freemarker
 
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
-import org.springframework.boot.WebApplicationType
 import org.springframework.fu.kofu.application
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils
@@ -30,7 +29,7 @@ class FreeMarkerDslTests {
 
     @Test
     fun `Use non web FreeMarker to generate content from template`() {
-        val app = application(WebApplicationType.NONE) {
+        val app = application {
             beans { bean<FreeMarkerUser>() }
             freeMarker {
                 templateLoaderPath = arrayOf("classpath:/templates/", "classpath:/templates-2/")
