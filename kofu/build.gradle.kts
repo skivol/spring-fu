@@ -19,6 +19,7 @@ dependencies {
 	compileOnly("org.springframework:spring-webflux")
 	compileOnly("org.springframework.boot:spring-boot-starter-security")
 	compileOnly("org.springframework.security.dsl:spring-security-kotlin-dsl:0.0.1.BUILD-SNAPSHOT") // needed until spring-security 5.4
+	compileOnly("org.springframework.session:spring-session-data-redis")
 	compileOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
 	compileOnly("org.springframework.data:spring-data-mongodb")
 	compileOnly("org.springframework.data:spring-data-r2dbc")
@@ -39,6 +40,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 	testImplementation("org.springframework.boot:spring-boot-starter-security")
 	testImplementation("org.springframework.security.dsl:spring-security-kotlin-dsl:0.0.1.BUILD-SNAPSHOT") // needed until spring-security 5.4
+	testImplementation("org.springframework.session:spring-session-data-redis")
 	testImplementation("org.springframework.boot:spring-boot-starter-tomcat")
 	testImplementation("org.springframework.boot:spring-boot-starter-undertow")
 	testImplementation("org.springframework.boot:spring-boot-starter-jetty")

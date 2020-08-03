@@ -17,33 +17,25 @@
 package org.springframework.fu.kofu.webflux
 
 import org.junit.jupiter.api.Test
+import org.springframework.fu.kofu.basicAuth
 import org.springframework.fu.kofu.localServerPort
 import org.springframework.fu.kofu.reactiveWebApplication
-import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService
-import org.springframework.security.core.userdetails.User
+import org.springframework.fu.kofu.repoAuthenticationManager
 import org.springframework.test.web.reactive.server.WebTestClient
-import java.nio.charset.Charset
 import java.time.Duration
-import java.util.*
 
 
 /**
- * @author Jonas Bark, Ivan Skachkov
+ * @author Jonas Bark
+ * @author Ivan Skachkov
  */
 class SecurityDslTests {
 
 	@Test
 	fun `Check spring-security configuration DSL`() {
-
-		val username = "user"
-		val password = "password"
-		val repoAuthenticationManager =
-				UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService(username, password))
-
 		val app = reactiveWebApplication {
 			security {
-				authenticationManager = repoAuthenticationManager
+				authenticationManager = repoAuthenticationManager()
 
 				http = {
 					authorizeExchange {
@@ -72,23 +64,10 @@ class SecurityDslTests {
 			client.get().uri("/view").exchange()
 					.expectStatus().isUnauthorized
 
-			val basicAuth =
-					Base64.getEncoder().encode("$username:$password".toByteArray())?.toString(Charset.defaultCharset())
-			client.get().uri("/view").header("Authorization", "Basic $basicAuth").exchange()
+			client.get().uri("/view").header("Authorization", "Basic ${basicAuth()}").exchange()
 					.expectStatus().is2xxSuccessful
 
 			close()
 		}
 	}
-
-	private fun userDetailsService(username: String, password: String): MapReactiveUserDetailsService {
-		@Suppress("DEPRECATION")
-		val user = User.withDefaultPasswordEncoder()
-				.username(username)
-				.password(password)
-				.roles("USER")
-				.build()
-		return MapReactiveUserDetailsService(user)
-	}
-
 }

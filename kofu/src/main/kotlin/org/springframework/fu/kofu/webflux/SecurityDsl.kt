@@ -23,6 +23,7 @@ import org.springframework.fu.kofu.ConfigurationDsl
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.web.reactive.SecurityInitializer
 import org.springframework.security.config.annotation.web.reactive.WebFluxSecurityInitializer
+import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.userdetails.ReactiveUserDetailsPasswordService
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -50,6 +51,11 @@ class SecurityDsl(private val init: SecurityDsl.() -> Unit) : AbstractDsl() {
 
     var http: ServerHttpSecurityDsl.() -> Unit = {}
 
+    /**
+     * For customizations not available through spring-security-dsl
+     */
+    var securityCustomizer: (http: ServerHttpSecurity) -> ServerHttpSecurity = { it }
+
     override fun initialize(context: GenericApplicationContext) {
         super.initialize(context)
         init()
@@ -61,6 +67,8 @@ class SecurityDsl(private val init: SecurityDsl.() -> Unit) : AbstractDsl() {
                 userDetailsPasswordService
         )
         securityInitializer.initialize(context)
+
+        securityCustomizer.invoke(securityInitializer.httpSecurity)
 
         val chain = securityInitializer.httpSecurity.invoke(http)
 

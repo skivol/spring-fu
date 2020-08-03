@@ -16,6 +16,7 @@ dependencies {
 	compileOnly("javax.servlet:javax.servlet-api")
 	compileOnly("org.springframework:spring-webflux")
 	compileOnly("org.springframework.boot:spring-boot-starter-security")
+	compileOnly("org.springframework.session:spring-session-data-redis")
 	compileOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
 	compileOnly("org.springframework.data:spring-data-mongodb")
 	compileOnly("org.mongodb:mongodb-driver-reactivestreams")
