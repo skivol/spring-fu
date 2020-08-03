@@ -1,6 +1,6 @@
 plugins {
 	id("io.spring.dependency-management") version "1.0.9.RELEASE"
-	id("org.springframework.boot") version "2.3.1.RELEASE"
+	id("org.springframework.boot") version "2.4.0-SNAPSHOT"
 	id("java")
 }
 
@@ -10,11 +10,11 @@ java {
 }
 
 dependencies {
-	implementation("org.springframework.fu:spring-fu-jafu:0.3.2")
+	implementation("org.springframework.fu:spring-fu-jafu:0.4.0-SNAPSHOT")
 
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("org.springframework.boot:spring-boot-starter-mustache")
-	implementation("org.springframework.data:spring-data-r2dbc")
+	implementation("org.springframework:spring-r2dbc")
 	implementation("io.r2dbc:r2dbc-h2")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

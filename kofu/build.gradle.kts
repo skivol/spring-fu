@@ -22,7 +22,7 @@ dependencies {
 	compileOnly("org.springframework.session:spring-session-data-redis")
 	compileOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
 	compileOnly("org.springframework.data:spring-data-mongodb")
-	compileOnly("org.springframework.data:spring-data-r2dbc")
+	compileOnly("org.springframework:spring-r2dbc")
 	compileOnly("org.mongodb:mongodb-driver-reactivestreams")
 	compileOnly("org.springframework.data:spring-data-cassandra")
 	compileOnly("org.springframework.data:spring-data-redis")
@@ -55,9 +55,12 @@ dependencies {
 	testImplementation("io.mockk:mockk:1.9")
 	testImplementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	testImplementation("javax.servlet:javax.servlet-api")
-	testCompile("org.testcontainers:testcontainers:1.11.3")
+	testCompile("org.testcontainers:testcontainers")
 	testImplementation("redis.clients:jedis")
 	testImplementation("io.lettuce:lettuce-core")
+	testImplementation("org.springframework:spring-r2dbc")
+	testRuntimeOnly("io.r2dbc:r2dbc-h2")
+	testRuntimeOnly("io.r2dbc:r2dbc-postgresql:0.8.4.RELEASE")
 }
 
 tasks.withType<Test> {
