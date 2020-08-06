@@ -19,7 +19,6 @@ package org.springframework.boot.autoconfigure.flyway;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.callback.Callback;
 import org.flywaydb.core.api.migration.JavaMigration;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
@@ -33,7 +32,7 @@ public class FlywayInitializer implements ApplicationContextInitializer<GenericA
 	private final FlywayProperties flywayProperties;
 	private final DataSourceProperties dataSourceProperties;
 
-	public FlywayInitializer(@NotNull FlywayProperties flywayProperties, DataSourceProperties dataSourceProperties) {
+	public FlywayInitializer(FlywayProperties flywayProperties, DataSourceProperties dataSourceProperties) {
 		this.flywayProperties = flywayProperties;
 		this.dataSourceProperties = dataSourceProperties;
 	}
