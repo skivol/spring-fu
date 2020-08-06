@@ -17,6 +17,7 @@ dependencies {
 	compileOnly("org.springframework:spring-webflux")
 	compileOnly("org.springframework.boot:spring-boot-starter-security")
 	compileOnly("org.springframework.session:spring-session-data-redis")
+	compileOnly("org.springframework:spring-jdbc")
 	compileOnly("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
 	compileOnly("org.springframework.data:spring-data-mongodb")
 	compileOnly("org.mongodb:mongodb-driver-reactivestreams")
@@ -33,7 +34,7 @@ dependencies {
 	compileOnly("io.r2dbc:r2dbc-postgresql")
 	compileOnly("io.r2dbc:r2dbc-h2")
 	compileOnly("io.r2dbc:r2dbc-mssql")
-	compileOnly("com.github.jasync-sql:jasync-r2dbc-mysql:0.9.53")
+	compileOnly("com.zaxxer:HikariCP")
 }
 
 repositories {
@@ -42,14 +43,22 @@ repositories {
 
 publishing {
 	publications {
-		create(project.name, MavenPublication::class.java) {
+		create<MavenPublication>(project.name) {
 			from(components["java"])
 			artifactId = "spring-fu-autoconfigure-adapter"
 			val sourcesJar by tasks.creating(Jar::class) {
-				classifier = "sources"
+				archiveClassifier.set("sources")
 				from(sourceSets["main"].allSource)
 			}
 			artifact(sourcesJar)
+			versionMapping {
+				usage("java-api") {
+					fromResolutionOf("runtimeClasspath")
+				}
+				usage("java-runtime") {
+					fromResolutionResult()
+				}
+			}
 		}
 	}
 }
