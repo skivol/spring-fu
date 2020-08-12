@@ -24,6 +24,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.fu.kofu.AbstractDsl
 import org.springframework.fu.kofu.ApplicationDsl
+import org.springframework.fu.kofu.ConfigurationDsl
 
 class FlywayDsl(
         private val init: FlywayDsl.() -> Unit,
@@ -65,7 +66,7 @@ class FlywayDsl(
  * @sample org.springframework.fu.kofu.samples.flywayDsl
  * @author Ivan Skachkov
  */
-fun ApplicationDsl.flyway(dsl: FlywayDsl.() -> Unit = {}) {
+fun ConfigurationDsl.flyway(dsl: FlywayDsl.() -> Unit = {}) {
     val flywayProperties = configurationProperties(prefix = "spring.flyway", defaultProperties = FlywayProperties())
     val datasourceProperties = configurationProperties(prefix = "spring.datasource", defaultProperties = DataSourceProperties())
     flywayProperties.url = flywayProperties.url ?: datasourceProperties.url

@@ -16,10 +16,8 @@
 
 package org.springframework.boot.context.properties;
 
-import org.springframework.boot.context.properties.bind.BindResult;
-import org.springframework.boot.context.properties.bind.Bindable;
-import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.boot.context.properties.bind.PropertySourcesPlaceholdersResolver;
+import org.springframework.boot.context.properties.bind.*;
+import org.springframework.boot.context.properties.bind.handler.IgnoreErrorsBindHandler;
 import org.springframework.boot.context.properties.bind.handler.IgnoreTopLevelConverterNotFoundBindHandler;
 import org.springframework.boot.context.properties.bind.handler.NoUnboundElementsBindHandler;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
@@ -32,25 +30,22 @@ import org.springframework.core.env.PropertySources;
  */
 public class FunctionalConfigurationPropertiesBinder {
 
-	private final ConfigurableApplicationContext context;
-
 	private final Binder binder;
+	private final Boolean strict;
 
-
-	public FunctionalConfigurationPropertiesBinder(ConfigurableApplicationContext context) {
+	public FunctionalConfigurationPropertiesBinder(ConfigurableApplicationContext context, Boolean strict) {
 		PropertySources propertySources = new FunctionalPropertySourcesDeducer(context).getPropertySources();
-		this.context = context;
+		this.strict = strict;
 		this.binder = new Binder(ConfigurationPropertySources.from(propertySources),
         				new PropertySourcesPlaceholdersResolver(propertySources),
         				null,
 				(registry) -> context.getBeanFactory().copyRegisteredEditorsTo(registry));
 	}
 
-
 	public <T> BindResult<T> bind(String prefix, Bindable<T> target) {
 		UnboundElementsSourceFilter filter = new UnboundElementsSourceFilter();
-		NoUnboundElementsBindHandler handler = new NoUnboundElementsBindHandler(new IgnoreTopLevelConverterNotFoundBindHandler(), filter);
+		NoUnboundElementsBindHandler strictHandler = new NoUnboundElementsBindHandler(new IgnoreTopLevelConverterNotFoundBindHandler(), filter);
+		BindHandler handler = strict ? strictHandler : new IgnoreErrorsBindHandler(strictHandler);
 		return binder.bind(prefix, target, handler);
 	}
-
 }

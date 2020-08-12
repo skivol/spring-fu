@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.mail.MailSenderPropertiesInitializ
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.fu.kofu.AbstractDsl
 import org.springframework.fu.kofu.ApplicationDsl
+import org.springframework.fu.kofu.ConfigurationDsl
 import java.nio.charset.Charset
 
 /**
@@ -118,7 +119,7 @@ class MailDsl(private val init: MailDsl.() -> Unit, private val mailProperties: 
  *
  * @sample org.springframework.fu.kofu.samples.mailDsl
  */
-fun ApplicationDsl.mail(dsl: MailDsl.() -> Unit = {}) {
+fun ConfigurationDsl.mail(dsl: MailDsl.() -> Unit = {}) {
     val mailProperties = configurationProperties<MailProperties>(prefix = "spring.mail")
     MailDsl(dsl, mailProperties).initialize(context)
 }

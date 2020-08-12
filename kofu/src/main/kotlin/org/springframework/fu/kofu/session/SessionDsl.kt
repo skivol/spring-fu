@@ -92,7 +92,7 @@ class ReactiveRedisDsl(
  * @see ReactiveRedisDsl
  */
 fun SessionDsl.reactiveRedis(dsl: ReactiveRedisDsl.() -> Unit = {}) {
-    val sessionProperties = configurationProperties(prefix = "spring.session", defaultProperties = SessionProperties())
+    val sessionProperties = configurationProperties(prefix = "spring.session", defaultProperties = SessionProperties(), strict = false)
     val redisSessionProperties = configurationProperties(prefix = "spring.session.redis", defaultProperties = RedisSessionProperties())
     ReactiveRedisDsl(dsl, sessionProperties, redisSessionProperties).initialize(context)
 }

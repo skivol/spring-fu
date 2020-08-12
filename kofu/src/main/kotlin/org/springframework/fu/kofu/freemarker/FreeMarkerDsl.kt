@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.fu.kofu.AbstractDsl
 import org.springframework.fu.kofu.ApplicationDsl
+import org.springframework.fu.kofu.ConfigurationDsl
 
 /**
  * Kofu DSL for FreeMarker configuration.
@@ -63,7 +64,7 @@ class FreeMarkerDsl(private val init: FreeMarkerDsl.() -> Unit, private val free
  *
  * @sample org.springframework.fu.kofu.samples.freeMarkerDsl
  */
-fun ApplicationDsl.freeMarker(dsl: FreeMarkerDsl.() -> Unit = {}) {
+fun ConfigurationDsl.freeMarker(dsl: FreeMarkerDsl.() -> Unit = {}) {
     val freeMarkerProperties = configurationProperties(prefix = "spring.freemarker", defaultProperties = FreeMarkerProperties())
     FreeMarkerDsl(dsl, freeMarkerProperties).initialize(context)
 }

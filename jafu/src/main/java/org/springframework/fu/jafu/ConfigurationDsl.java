@@ -56,7 +56,7 @@ public class ConfigurationDsl extends AbstractDsl {
 	 * @see <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-typesafe-configuration-properties">Type-safe Configuration Properties</a>
 	 */
 	public <T> ConfigurationDsl configurationProperties(Class<T> clazz, String prefix) {
-		context.registerBean(clazz.getSimpleName() + "ConfigurationProperties", clazz, () -> new FunctionalConfigurationPropertiesBinder(context).bind(prefix, Bindable.of(clazz)).get());
+		context.registerBean(clazz.getSimpleName() + "ConfigurationProperties", clazz, () -> new FunctionalConfigurationPropertiesBinder(context, true).bind(prefix, Bindable.of(clazz)).get());
 		return this;
 	}
 
