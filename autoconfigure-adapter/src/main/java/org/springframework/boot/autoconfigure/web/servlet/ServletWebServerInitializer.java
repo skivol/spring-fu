@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletRegistration;
 
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -97,13 +98,7 @@ public class ServletWebServerInitializer implements ApplicationContextInitialize
 			@Override
 			public WebMvcAutoConfigurationAdapter get() {
 				if (configuration == null) {
-					configuration = new WebMvcAutoConfigurationAdapter(
-						resourceProperties, webMvcProperties, context,
-						context.getBeanProvider(HttpMessageConverters.class),
-						context.getBeanProvider(ResourceHandlerRegistrationCustomizer.class),
-						context.getBeanProvider(DispatcherServletPath.class),
-						context.getBeanProvider(ResolvableType.forClassWithGenerics(ServletRegistrationBean.class, Object.class))
-					);
+					configuration = new WebMvcAutoConfigurationAdapter(resourceProperties, webMvcProperties, context, context.getBeanProvider(HttpMessageConverters.class), context.getBeanProvider(ResourceHandlerRegistrationCustomizer.class), context.getBeanProvider(DispatcherServletPath.class), context.getBeanProvider(ResolvableType.forClass(ServletRegistrationBean.class)));
 					return configuration;
 				}
 				return configuration;
