@@ -25,7 +25,7 @@ public class LettuceRedisInitializer implements ApplicationContextInitializer<Ge
     @Override
     public void initialize(GenericApplicationContext context) {
 		context.registerBean(RedisConnectionFactory.class, () -> getLettuceConnectionFactory(context));
-		context.registerBean(ReactiveRedisConnectionFactory.class, () -> getLettuceConnectionFactory(context));
+		context.registerBean(ReactiveRedisConnectionFactory.class, () -> getLettuceConnectionFactory(context), (def) -> def.setPrimary(true));
     }
 
     private LettuceConnectionFactory getLettuceConnectionFactory(GenericApplicationContext context) {

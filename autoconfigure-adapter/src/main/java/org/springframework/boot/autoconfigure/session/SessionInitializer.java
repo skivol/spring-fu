@@ -23,7 +23,7 @@ public class SessionInitializer {
             SpringWebSessionConfiguration springWebSessionConfiguration = new SpringWebSessionConfiguration();
             WebSessionManager webSessionManager = springWebSessionConfiguration.webSessionManager(
                     (ReactiveSessionRepository<? extends Session>) context.getBeanProvider(
-                            ResolvableType.forClassWithGenerics(ReactiveSessionRepository.class, Session.class)
+                        ReactiveSessionRepository.class
                     ).getIfAvailable()
             );
             WebSessionIdResolver webSessionIdResolver = context.getBeanProvider(WebSessionIdResolver.class).getIfAvailable();
