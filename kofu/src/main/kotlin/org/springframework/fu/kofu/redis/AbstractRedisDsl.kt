@@ -11,8 +11,7 @@ import java.time.Duration
  *
  * @author Waldemar Panas
  */
-open class AbstractRedisDsl : AbstractDsl() {
-	protected val properties = RedisProperties()
+open class AbstractRedisDsl(protected val properties: RedisProperties = RedisProperties()) : AbstractDsl() {
 
 	/**
 	 * Configure the database index used by the connection factory.

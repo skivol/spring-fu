@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import javax.servlet.MultipartConfigElement;
-import javax.servlet.ServletRegistration;
 
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.ObjectProvider;

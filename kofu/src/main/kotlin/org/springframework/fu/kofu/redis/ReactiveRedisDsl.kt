@@ -1,9 +1,6 @@
 package org.springframework.fu.kofu.redis
 
-import org.springframework.boot.autoconfigure.data.redis.ClusterInitializer
-import org.springframework.boot.autoconfigure.data.redis.LettuceRedisInitializer
-import org.springframework.boot.autoconfigure.data.redis.RedisReactiveInitializer
-import org.springframework.boot.autoconfigure.data.redis.SentinelInitializer
+import org.springframework.boot.autoconfigure.data.redis.*
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.fu.kofu.ConfigurationDsl
@@ -15,7 +12,7 @@ import org.springframework.fu.kofu.ConfigurationDsl
  * @author Sebastien Deleuze
  */
 @Suppress("UsePropertyAccessSyntax")
-class ReactiveRedisDsl(private val init: ReactiveRedisDsl.() -> Unit) : AbstractRedisDsl(), LettuceRedisSupporter {
+class ReactiveRedisDsl(private val init: ReactiveRedisDsl.() -> Unit, redisProperties: RedisProperties) : AbstractRedisDsl(redisProperties), LettuceRedisSupporter {
 
 	private var lettuceInitializer: ApplicationContextInitializer<GenericApplicationContext>? = null
 
@@ -45,5 +42,6 @@ class ReactiveRedisDsl(private val init: ReactiveRedisDsl.() -> Unit) : Abstract
  * @see ReactiveRedisDsl
  */
 fun ConfigurationDsl.reactiveRedis(dsl: ReactiveRedisDsl.() -> Unit = {}) {
-	ReactiveRedisDsl(dsl).initialize(context)
+	val redisProperties = configurationProperties<RedisProperties>(prefix = "spring.redis")
+	ReactiveRedisDsl(dsl, redisProperties).initialize(context)
 }
