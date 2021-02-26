@@ -3,16 +3,9 @@ package org.springframework.fu.kofu.webmvc
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.getBeanProvider
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils
-import org.springframework.boot.autoconfigure.web.ResourceProperties
 import org.springframework.boot.autoconfigure.web.ServerProperties
-import org.springframework.boot.autoconfigure.web.servlet.FormConverterInitializer
-import org.springframework.boot.autoconfigure.web.servlet.ResourceConverterInitializer
-import org.springframework.boot.autoconfigure.web.servlet.AtomConverterInitializer
-import org.springframework.boot.autoconfigure.web.servlet.JacksonJsonConverterInitializer
-import org.springframework.boot.autoconfigure.web.servlet.RssConverterInitializer
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerInitializer
-import org.springframework.boot.autoconfigure.web.servlet.StringConverterInitializer
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties
+import org.springframework.boot.autoconfigure.web.WebProperties
+import org.springframework.boot.autoconfigure.web.servlet.*
 import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory
@@ -28,8 +21,7 @@ import org.springframework.web.servlet.function.RouterFunctionDsl
 /**
  * Kofu DSL for Spring MVC server.
  *
- * This DSL to be used in [org.springframework.fu.kofu.application] and a
- * [org.springframework.boot.WebApplicationType.SERVLET] parameter configures
+ * This DSL to be used in [org.springframework.fu.kofu.webApplication] configures
  * a Spring MVC server with functional routing.
  *
  * Required dependencies can be retrieve using `org.springframework.boot:spring-boot-starter-web`.
@@ -38,13 +30,16 @@ import org.springframework.web.servlet.function.RouterFunctionDsl
  * @see org.springframework.fu.kofu.application
  * @author Sebastien Deleuze
  */
+@Suppress("DEPRECATION")
 open class WebMvcServerDsl(private val init: WebMvcServerDsl.() -> Unit): AbstractDsl() {
 
 	private val serverProperties = ServerProperties()
 
 	private val webMvcProperties = WebMvcProperties()
 
-	private val resourceProperties = ResourceProperties()
+	private val resourceProperties = org.springframework.boot.autoconfigure.web.ResourceProperties()
+
+	private val webProperties = WebProperties()
 
 	private var convertersConfigured: Boolean = false
 
@@ -80,7 +75,7 @@ open class WebMvcServerDsl(private val init: WebMvcServerDsl.() -> Unit): Abstra
 			StringConverterInitializer().initialize(context)
 			ResourceConverterInitializer().initialize(context)
 		}
-		ServletWebServerInitializer(serverProperties, webMvcProperties, resourceProperties, engine).initialize(context)
+		ServletWebServerInitializer(serverProperties, webMvcProperties, resourceProperties, webProperties, engine).initialize(context)
 	}
 
 	/**
@@ -208,6 +203,13 @@ open class WebMvcServerDsl(private val init: WebMvcServerDsl.() -> Unit): Abstra
 		 */
 		fun rss() {
 			RssConverterInitializer().initialize(context)
+		}
+
+		/**
+		 * Enable [org.springframework.http.converter.json.KotlinSerializationJsonHttpMessageConverter]
+		 */
+		fun kotlinSerialization() {
+			KotlinSerializationConverterInitializer().initialize(context)
 		}
 	}
 }

@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.jetbrains.kotlin.jvm") version "1.3.72" apply false
+	id("org.jetbrains.kotlin.jvm") version "1.4.10" apply false
 	id("org.springframework.boot") apply false
-	id("org.jetbrains.dokka") version "0.10.1" apply false
-	id("io.spring.dependency-management") version "1.0.9.RELEASE"
+	id("org.jetbrains.dokka") version "1.4.10" apply false
+	id("io.spring.dependency-management") version "1.0.10.RELEASE"
 	id("maven-publish")
 }
 
@@ -21,7 +21,7 @@ allprojects {
 		val bootVersion: String by project
 		imports {
 			mavenBom("org.springframework.boot:spring-boot-dependencies:$bootVersion")
-			mavenBom("org.testcontainers:testcontainers-bom:1.14.3")
+			mavenBom("org.testcontainers:testcontainers-bom:1.15.1")
 		}
 	}
 
@@ -49,6 +49,11 @@ allprojects {
 
 	tasks.withType<Test> {
 		useJUnitPlatform()
+	}
+
+	tasks.withType<JavaCompile> {
+		sourceCompatibility = "8"
+		targetCompatibility = "8"
 	}
 
 	tasks.withType<KotlinCompile> {
@@ -142,6 +147,19 @@ publishing {
 				}
 				destinationDirectory.set(file("$buildDir/dist"))
 				into("kofu-reactive-r2dbc")
+				setExecutablePermissions()
+			})
+		}
+
+		create<MavenPublication>("kofu-reactive-data-r2dbc") {
+			groupId = "org.springframework.fu"
+			artifactId = "spring-fu-samples-kofu-reactive-data-r2dbc"
+			artifact(task<Zip>("kofuReactiveDataR2dbcSampleZip") {
+				from("samples/kofu-reactive-data-r2dbc") {
+					exclude("build", ".gradle", ".idea", "out", "*.iml")
+				}
+				destinationDirectory.set(file("$buildDir/dist"))
+				into("kofu-reactive-data-r2dbc")
 				setExecutablePermissions()
 			})
 		}

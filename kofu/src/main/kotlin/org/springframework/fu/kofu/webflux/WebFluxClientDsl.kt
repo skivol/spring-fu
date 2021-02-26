@@ -105,12 +105,17 @@ class WebFluxClientDsl(private val init: WebFluxClientDsl.() -> Unit) : Abstract
 		/**
 		* Enable [org.springframework.http.codec.multipart.MultipartHttpMessageWriter] and
 		* [org.springframework.http.codec.multipart.MultipartHttpMessageReader]
-		*
-		* This codec requires Synchronoss NIO Multipart library via  the `org.synchronoss.cloud:nio-multipart-parser`
-		* dependency.
 		*/
 		fun multipart() {
 			MultipartCodecInitializer(true).initialize(context)
+		}
+
+		/**
+		 * Enable [org.springframework.http.codec.json.KotlinSerializationJsonDecoder] and
+		 * [org.springframework.http.codec.json.KotlinSerializationJsonEncoder]
+		 */
+		fun kotlinSerialization() {
+			KotlinSerializationCodecInitializer(true).initialize(context)
 		}
 	}
 }

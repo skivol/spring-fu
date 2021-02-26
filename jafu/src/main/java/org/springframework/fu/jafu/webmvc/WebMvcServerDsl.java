@@ -5,9 +5,9 @@ import java.util.function.Supplier;
 
 import org.springframework.beans.factory.config.BeanDefinitionCustomizer;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
-import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.servlet.AtomConverterInitializer;
 import org.springframework.boot.autoconfigure.web.servlet.FormConverterInitializer;
 import org.springframework.boot.autoconfigure.web.servlet.JacksonJsonConverterInitializer;
@@ -24,6 +24,8 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.fu.jafu.AbstractDsl;
+import org.springframework.fu.jafu.templating.MustacheDsl;
+import org.springframework.fu.jafu.templating.ThymeleafDsl;
 import org.springframework.fu.jafu.web.JacksonDsl;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.RouterFunctions;
@@ -50,6 +52,8 @@ public class WebMvcServerDsl extends AbstractDsl {
 	private ServerProperties serverProperties = new ServerProperties();
 
 	private ResourceProperties resourceProperties = new ResourceProperties();
+
+	private WebProperties webProperties = new WebProperties();
 
 	private WebMvcProperties webMvcProperties = new WebMvcProperties();
 
@@ -155,7 +159,7 @@ public class WebMvcServerDsl extends AbstractDsl {
 		if (context.containsBeanDefinition("webHandler")) {
 			throw new IllegalStateException("Only one webFlux per application is supported");
 		}
-		new ServletWebServerInitializer(serverProperties, webMvcProperties, resourceProperties, engine).initialize(context);
+		new ServletWebServerInitializer(serverProperties, webMvcProperties, resourceProperties, webProperties, engine).initialize(context);
 	}
 
 	private class TomcatDelegate implements Supplier<ConfigurableServletWebServerFactory> {
@@ -178,6 +182,41 @@ public class WebMvcServerDsl extends AbstractDsl {
 			return new UndertowServletWebServerFactory();
 		}
 	}
+
+	/**
+	 * @see #thymeleaf(Consumer)
+	 */
+	public WebMvcServerDsl thymeleaf() {
+		return thymeleaf(dsl -> {});
+	}
+
+	/**
+	 * Configure Thymeleaf view resolver.
+	 *
+	 * Require {@code org.springframework.boot:spring-boot-starter-thymeleaf} dependency.
+	 */
+	public WebMvcServerDsl thymeleaf(Consumer<ThymeleafDsl> dsl) {
+		new ThymeleafDsl(dsl).initializeServlet(context);
+		return this;
+	}
+
+	/**
+	 * @see #mustache(Consumer)
+	 */
+	public WebMvcServerDsl mustache() {
+		return mustache(dsl -> {});
+	}
+
+	/**
+	 * Configure Mustache view resolver.
+	 *
+	 * Require {@code org.springframework.boot:spring-boot-starter-mustache} dependency.
+	 */
+	public WebMvcServerDsl mustache(Consumer<MustacheDsl> dsl) {
+		new MustacheDsl(dsl).initializeServlet(context);
+		return this;
+	}
+
 
 	/**
 	 * Jafu DSL for WebMvc server codecs.

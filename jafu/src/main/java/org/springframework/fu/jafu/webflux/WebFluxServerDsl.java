@@ -10,6 +10,7 @@ import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.FormCodecInitializer;
 import org.springframework.boot.autoconfigure.web.reactive.JacksonJsonCodecInitializer;
 import org.springframework.boot.autoconfigure.web.reactive.MultipartCodecInitializer;
@@ -23,6 +24,8 @@ import org.springframework.boot.web.reactive.server.ConfigurableReactiveWebServe
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.fu.jafu.AbstractDsl;
+import org.springframework.fu.jafu.templating.MustacheDsl;
+import org.springframework.fu.jafu.templating.ThymeleafDsl;
 import org.springframework.fu.jafu.web.JacksonDsl;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
@@ -31,9 +34,8 @@ import org.springframework.web.server.WebFilter;
 /**
  * Jafu DSL for WebFlux server.
  *
- * This DSL to be used with {@link org.springframework.fu.jafu.Jafu#application(WebApplicationType, java.util.function.Consumer)}
- * using a {@link WebApplicationType#REACTIVE} parameter configures a
- * <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#spring-webflux"></a>WebFlux server</a>.
+ * This DSL to be used with {@link org.springframework.fu.jafu.Jafu#reactiveWebApplication(java.util.function.Consumer)}
+ * configures a <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#spring-webflux"></a>WebFlux server</a>.
  *
  * When no codec is configured, {@code String} and {@code Resource} ones are configured by default.
  * When a {@code codecs} block is declared, the one specified are configured by default.
@@ -42,11 +44,12 @@ import org.springframework.web.server.WebFilter;
  *
  * Required dependencies can be retrieve using {@code org.springframework.boot:spring-boot-starter-webflux}.
  *
- * @see org.springframework.fu.jafu.Jafu#application(WebApplicationType, java.util.function.Consumer)
+ * @see org.springframework.fu.jafu.Jafu#reactiveWebApplication(java.util.function.Consumer)
  * @see WebFluxServerDsl#codecs(Consumer)
  * @see WebFluxServerDsl#mustache()
  * @author Sebastien Deleuze
  */
+@SuppressWarnings("deprecation")
 public class WebFluxServerDsl extends AbstractDsl {
 
 	private final Consumer<WebFluxServerDsl> dsl;
@@ -54,6 +57,8 @@ public class WebFluxServerDsl extends AbstractDsl {
 	private ServerProperties serverProperties = new ServerProperties();
 
 	private ResourceProperties resourceProperties = new ResourceProperties();
+
+	private WebProperties webProperties = new WebProperties();
 
 	private WebFluxProperties webFluxProperties = new WebFluxProperties();
 
@@ -124,6 +129,23 @@ public class WebFluxServerDsl extends AbstractDsl {
 	}
 
 	/**
+	 * @see #thymeleaf(Consumer)
+	 */
+	public WebFluxServerDsl thymeleaf() {
+		return thymeleaf(dsl -> {});
+	}
+
+	/**
+	 * Configure Thymeleaf view resolver.
+	 *
+	 * Require {@code org.springframework.boot:spring-boot-starter-thymeleaf} dependency.
+	 */
+	public WebFluxServerDsl thymeleaf(Consumer<ThymeleafDsl> dsl) {
+		new ThymeleafDsl(dsl).initializeReactive(context);
+		return this;
+	}
+
+	/**
 	 * @see #mustache(Consumer)
 	 */
 	public WebFluxServerDsl mustache() {
@@ -136,7 +158,7 @@ public class WebFluxServerDsl extends AbstractDsl {
 	 * Require {@code org.springframework.boot:spring-boot-starter-mustache} dependency.
 	 */
 	public WebFluxServerDsl mustache(Consumer<MustacheDsl> dsl) {
-		new MustacheDsl(dsl).initialize(context);
+		new MustacheDsl(dsl).initializeReactive(context);
 		return this;
 	}
 
@@ -164,7 +186,7 @@ public class WebFluxServerDsl extends AbstractDsl {
 		if (context.containsBeanDefinition("webHandler")) {
 			throw new IllegalStateException("Only one webFlux per application is supported");
 		}
-		new ReactiveWebServerInitializer(serverProperties, resourceProperties, webFluxProperties, engine).initialize(context);
+		new ReactiveWebServerInitializer(serverProperties, resourceProperties, webProperties, webFluxProperties, engine).initialize(context);
 
 	}
 
@@ -236,8 +258,6 @@ public class WebFluxServerDsl extends AbstractDsl {
 		/**
 		 * Enable {@link org.springframework.http.codec.multipart.MultipartHttpMessageWriter} and
 		 * {@link org.springframework.http.codec.multipart.MultipartHttpMessageReader}
-		 *
-		 * This codec requires Synchronoss NIO Multipart library via  the {@code org.synchronoss.cloud:nio-multipart-parser} dependency.
 		 */
 		public WebFluxServerCodecDsl multipart() {
 			new MultipartCodecInitializer(false).initialize(context);

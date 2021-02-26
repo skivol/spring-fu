@@ -34,10 +34,10 @@ class PostgreSqlR2dbcDslTests {
 		with(app.run()) {
 			val repository = getBean<TestRepository>()
 
-			repository.createTable().block()
-			repository.save(user).block()
 			StepVerifier
-					.create(repository.findById(user.id))
+					.create(repository.createTable()
+							.then(repository.save(user))
+							.then(repository.findById(user.id)))
 					.expectNext(user)
 					.verifyComplete()
 			close()
