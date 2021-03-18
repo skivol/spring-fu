@@ -18,16 +18,22 @@ package org.springframework.fu.kofu.webflux
 
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.getBeanProvider
+import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties
+import org.springframework.boot.autoconfigure.security.oauth2.client.reactive.ReactiveOAuth2ClientConfigurationsInitializer
+import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.fu.kofu.AbstractDsl
+import org.springframework.fu.kofu.ConfigurationDsl
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.web.reactive.ServerHttpSecurityInitializer
 import org.springframework.security.config.annotation.web.reactive.WebFluxSecurityInitializer
+import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurityDsl
 import org.springframework.security.config.web.server.invoke
 import org.springframework.security.core.userdetails.ReactiveUserDetailsPasswordService
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
 import org.springframework.security.web.server.context.ServerSecurityContextRepository
 
 /**
@@ -57,6 +63,15 @@ class WebFluxSecurityDsl(private val init: WebFluxSecurityDsl.() -> Unit) : Abst
 		this.httpConfiguration = httpConfiguration
 	}
 
+	/**
+	 * For customizations not available through spring-security-dsl
+	 */
+	var securityCustomizer: (http: ServerHttpSecurity) -> ServerHttpSecurity = { it }
+
+	fun oauth2ClientBeans(init: OAuth2ClientBeansDsl.() -> Unit = {}) {
+		OAuth2ClientBeansDsl(init).initialize(context)
+	}
+
 	override fun initialize(context: GenericApplicationContext) {
 		super.initialize(context)
 		init()
@@ -69,14 +84,13 @@ class WebFluxSecurityDsl(private val init: WebFluxSecurityDsl.() -> Unit) : Abst
 		)
 		securityInitializer.initialize(context)
 		WebFluxSecurityInitializer {
+			securityCustomizer.invoke(it)
 			if (securityContextRepository != null) {
 				it.securityContextRepository(securityContextRepository)
 			} else {
 				it
-			}
-					.invoke(httpConfiguration)
-		}
-				.initialize(context)
+			}.invoke(httpConfiguration)
+		}.initialize(context)
 	}
 }
 
@@ -113,3 +127,19 @@ inline fun <reified T : Any> WebFluxSecurityDsl.ref(name: String? = null): T = w
  * @see org.springframework.beans.factory.BeanFactory.getBeanProvider
  */
 inline fun <reified T : Any> WebFluxSecurityDsl.provider() : ObjectProvider<T> = context.getBeanProvider()
+
+class OAuth2ClientBeansDsl(private val init: OAuth2ClientBeansDsl.() -> Unit) : ConfigurationDsl({}) {
+	var oauth2ClientProperties: OAuth2ClientProperties? = null
+	var reactiveClientRegistrationRepository: ReactiveClientRegistrationRepository? = null
+
+	override fun initialize(context: GenericApplicationContext) {
+		super.initialize(context)
+		init()
+
+		val oauth2ClientProperties = oauth2ClientProperties ?: configurationProperties(prefix = "spring.security.oauth2.client", defaultProperties = OAuth2ClientProperties())
+		val webFlux = context is ReactiveWebServerApplicationContext
+		if (webFlux) {
+			ReactiveOAuth2ClientConfigurationsInitializer(oauth2ClientProperties, reactiveClientRegistrationRepository).initialize(context)
+		}
+	}
+}

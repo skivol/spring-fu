@@ -66,23 +66,6 @@ class SessionDslTests {
             session {
                 reactiveRedis()
             }
-            security {
-                authenticationManager = repoAuthenticationManager()
-
-                http = {
-                    authorizeExchange {
-                        authorize("/view", hasRole("USER"))
-                        authorize("/login", permitAll)
-                    }
-                    formLogin {
-                        loginPage = "/login"
-                    }
-                    csrf {
-                        csrfTokenRepository = CookieServerCsrfTokenRepository.withHttpOnlyFalse()
-                    }
-                    logout { }
-                }
-            }
             webFlux {
                 port = 0
                 router {
@@ -93,6 +76,24 @@ class SessionDslTests {
                     form()
                 }
                 filter<CsrfFilter>()
+
+                security {
+                    authenticationManager = repoAuthenticationManager()
+
+                    http {
+                        authorizeExchange {
+                            authorize("/view", hasRole("USER"))
+                            authorize("/login", permitAll)
+                        }
+                        formLogin {
+                            loginPage = "/login"
+                        }
+                        csrf {
+                            csrfTokenRepository = CookieServerCsrfTokenRepository.withHttpOnlyFalse()
+                        }
+                        logout { }
+                    }
+                }
             }
         }
 

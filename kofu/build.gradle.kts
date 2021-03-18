@@ -42,7 +42,6 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 	testImplementation("org.springframework.boot:spring-boot-starter-security")
-	testImplementation("org.springframework.security.dsl:spring-security-kotlin-dsl:0.0.1.BUILD-SNAPSHOT") // needed until spring-security 5.4
 	testImplementation("org.springframework.session:spring-session-data-redis")
 	testImplementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	testImplementation("org.springframework.boot:spring-boot-starter-tomcat")

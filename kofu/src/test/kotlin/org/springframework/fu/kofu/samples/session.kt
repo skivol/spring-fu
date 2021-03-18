@@ -33,17 +33,18 @@ fun sessionDsl() {
                 saveMode = SaveMode.ON_SET_ATTRIBUTE // default
             }
         }
-        security {
-            http = {
-                anonymous {  }
-                authorizeExchange {
-                    authorize("/view", hasRole("USER"))
-                    authorize("/public-view", permitAll)
+        webFlux {
+            security {
+                http {
+                    anonymous {  }
+                    authorizeExchange {
+                        authorize("/view", hasRole("USER"))
+                        authorize("/public-view", permitAll)
+                    }
+                    headers {}
+                    logout {}
                 }
-                headers {}
-                logout {}
             }
         }
-        webFlux { }
     }
 }
